@@ -1,0 +1,27 @@
+{
+  "name": "@dlarsson.se/cached-api",
+  "version": "0.1.0",
+  "description": "Cached API request package.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "mocha --reporter spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dlarssonse/cached-api.git"
+  },
+  "keywords": [
+    "ng",
+    "api"
+  ],
+  "author": "David Larsson <dlarsson.se@gmail.com> (https://www.dlarsson.se)",
+  "license": "ISC",
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^5.2.0",
+    "typescript": "^3.1.6"
+  },
+  "dependencies": {}
+}
