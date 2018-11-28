@@ -2,11 +2,15 @@
   "name": "@dlarsson.se/cached-api",
   "version": "0.1.0",
   "description": "Cached API request package.",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/service.js",
+  "types": "dist/service.d.ts",
   "scripts": {
-    "build": "tsc",
-    "test": "mocha --reporter spec"
+    "build": "tsc && rimraf ./dist/test",
+    "build:clean": "rimraf ./dist",
+    "test": "jest --config jestconfig.json",
+    "test:watch": "jest --watch",
+    "format": "prettier --write \"lib/**/*.ts\" \"lib/**/*.js\"",
+    "lint": "tslint -p tsconfig.json"
   },
   "repository": {
     "type": "git",
@@ -19,9 +23,17 @@
   "author": "David Larsson <dlarsson.se@gmail.com> (https://www.dlarsson.se)",
   "license": "ISC",
   "devDependencies": {
-    "chai": "^4.2.0",
-    "mocha": "^5.2.0",
-    "typescript": "^3.1.6"
+    "@angular/common": "^7.1.0",
+    "@angular/core": "^7.1.0",
+    "@types/jest": "^23.3.9",
+    "jest": "^23.6.0",
+    "prettier": "^1.15.2",
+    "rxjs": "^6.3.3",
+    "ts-jest": "^23.10.5",
+    "tslint": "^5.11.0",
+    "tslint-config-prettier": "^1.17.0",
+    "typescript": "^3.1.6",
+    "zone.js": "^0.8.26"
   },
   "dependencies": {}
 }
