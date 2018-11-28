@@ -1,7 +1,7 @@
-import { TestBed, getTestBed, inject, async } from '@angular/core/testing';
-import { HttpClientModule, HttpClient, HttpHandler } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { Observable, of, Subscription } from 'rxjs';
+import { TestBed } from '@angular/core/testing';
+import { of, Subscription } from 'rxjs';
 
 import { CachedAPIService } from '../lib/service'
 
@@ -35,9 +35,8 @@ describe('CachedAPIService', () => {
     });
   });
 
-  let serviceGET = new CachedAPIService(httpGET as any);
-  let serviceFIND = new CachedAPIService(httpFIND as any);
-  let httpMock: HttpTestingController;
+  const serviceGET = new CachedAPIService(httpGET as any);
+  const serviceFIND = new CachedAPIService(httpFIND as any);
 
   it(`should be instance of CachedAPIService`, () => {
     expect(serviceGET).toBeInstanceOf(CachedAPIService);
@@ -45,11 +44,11 @@ describe('CachedAPIService', () => {
   });
 
   it('adding an URL should be automatic', () => {
-    let name = serviceGET.getName(new TestData())
+    const name = serviceGET.getName(new TestData())
     expect(name).toBe('TestData');
     serviceFIND.getName(new TestData())
 
-    let result = serviceGET.addURL(new TestData(), 'localhost');
+    const result = serviceGET.addURL(new TestData(), 'localhost');
     expect(result).toBeUndefined();
     serviceFIND.addURL(new TestData(), 'localhost');
   });
@@ -82,7 +81,7 @@ describe('CachedAPIService', () => {
    */
   it('GET (uncached)', (done) => {
     httpGET.get.mockImplementationOnce(() => of(testData[0]));
-    let result = serviceGET.get(new TestData(), 0).subscribe((value) => {
+    const result = serviceGET.get(new TestData(), 0).subscribe((value) => {
       expect(value.id).toBe(0);
       expect((value as any).__cached).toBeFalsy();
       done();
@@ -98,7 +97,7 @@ describe('CachedAPIService', () => {
    */
   it('GET (cached)', (done) => {
     httpGET.get.mockImplementationOnce(() => of(testData[0]));
-    let result = serviceGET.get(new TestData(), 0).subscribe((value) => {
+    const result = serviceGET.get(new TestData(), 0).subscribe((value) => {
       expect(value.id).toBe(0);
       expect((value as any).__cached).toBeTruthy();
       done();
@@ -115,7 +114,7 @@ describe('CachedAPIService', () => {
   it('GET (cleared cache)', (done) => {
     httpGET.get.mockImplementationOnce(() => of(testData[0]));
     serviceGET.clear(new TestData(), 0);
-    let result = serviceGET.get(new TestData(), 0).subscribe((value) => {
+    const result = serviceGET.get(new TestData(), 0).subscribe((value) => {
       expect(value.id).toBe(0);
       expect((value as any).__cached).toBeFalsy();
       done();
@@ -132,7 +131,7 @@ describe('CachedAPIService', () => {
    */
   it('FIND (uncached)', (done) => {
     httpFIND.get.mockImplementationOnce(() => of(testData));
-    let result = serviceFIND.find(new TestData()).subscribe((value) => {
+    const result = serviceFIND.find(new TestData()).subscribe((value) => {
       expect((value as any)[0].id).toBe(0);
       expect((value as any)[0].__cached).toBeFalsy();
       expect((value as any)[1].id).toBe(1);
@@ -152,7 +151,7 @@ describe('CachedAPIService', () => {
    */
   it('FIND (cache)', (done) => {
     httpFIND.get.mockImplementationOnce(() => of(testData));
-    let result = serviceFIND.find(new TestData()).subscribe((value) => {
+    const result = serviceFIND.find(new TestData()).subscribe((value) => {
       expect((value as any)[0].id).toBe(0);
       expect((value as any)[0].__cached).toBeTruthy();
       expect((value as any)[1].id).toBe(1);
@@ -173,7 +172,7 @@ describe('CachedAPIService', () => {
   it('FIND (cleared cache)', (done) => {
     httpFIND.get.mockImplementationOnce(() => of(testData));
     serviceFIND.clear(new TestData());
-    let result = serviceFIND.find(new TestData()).subscribe((value) => {
+    const result = serviceFIND.find(new TestData()).subscribe((value) => {
       expect((value as any)[0].id).toBe(0);
       expect((value as any)[0].__cached).toBeFalsy();
       expect((value as any)[1].id).toBe(1);

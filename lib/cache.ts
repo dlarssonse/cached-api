@@ -17,15 +17,15 @@ export class CachedAPIData {
   }
 
   /**
-   * 
+   *
    */
   public getRequest(): any {
     return this.request;
   }
 
   /**
-   * 
-   * @param value 
+   *
+   * @param value
    */
   public setRequest(request: any): void {
     this.request = request;

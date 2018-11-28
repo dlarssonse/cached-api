@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { tap, shareReplay } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { shareReplay, tap } from 'rxjs/operators';
 
 import { CachedAPIData } from './cache';
 
@@ -12,16 +12,15 @@ export let httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
 };
 
-
 /**
  * Main service class for enabling Cached API Requests
  */
 @Injectable()
 export class CachedAPIService {
+  public cacheSize = 1;
+
   private urls: string[];
   private cache: CachedAPIData[];
-
-  public cacheSize = 1;
 
   /**
    *
@@ -41,8 +40,8 @@ export class CachedAPIService {
   }
 
   /**
-   * 
-   * @param item 
+   *
+   * @param item
    */
   public getName(item: any): any {
     const prototype = Object.getPrototypeOf(item).constructor.name;
@@ -50,9 +49,9 @@ export class CachedAPIService {
   }
 
   /**
-   * 
-   * @param item 
-   * @param id 
+   *
+   * @param item
+   * @param id
    */
   public clear(item: any, id?: any) {
     const name = this.getName(item);
@@ -93,7 +92,7 @@ export class CachedAPIService {
   public delete<T>(item: T, id: any): Observable<T> {
     const url = this.getURL(item) + '/' + id;
     return this.http.delete<T>(url, httpOptions).pipe(
-      tap((response) => { 
+      tap(response => {
         /* Handle Response Stuff? */
       }),
     );
@@ -108,57 +107,63 @@ export class CachedAPIService {
     const cacheName = (name as any) + id;
 
     // Check if this is cached
-    if(this.cache[cacheName]) {
+    if (this.cache[cacheName]) {
       return this.cache[cacheName].getRequest().pipe(
         shareReplay(this.cacheSize),
         tap((response: T) => {
           Object.assign(response, { __cached: true });
-        }));
-    } else {
-      const url = this.getURL(item) + "/" + id;
-      this.cache[cacheName] = new CachedAPIData(name);
-      this.cache[cacheName].setRequest(this.http.get<T>(url, httpOptions).pipe(
-        tap((response: T) => {
-          Object.assign(response, { __cached: false });
         }),
-      ));
+      );
+    } else {
+      const url = this.getURL(item) + '/' + id;
+      this.cache[cacheName] = new CachedAPIData(name);
+      this.cache[cacheName].setRequest(
+        this.http.get<T>(url, httpOptions).pipe(
+          tap((response: T) => {
+            Object.assign(response, { __cached: false });
+          }),
+        ),
+      );
     }
 
     return this.cache[cacheName].getRequest();
-  }  
+  }
 
   /**
-   * 
-   * @param item 
-   * @param id 
+   *
+   * @param item
+   * @param id
    */
   public find<T>(item: T, query?: any): Observable<T> {
     const name = this.getName(item);
-    const cacheName = (name as any)+query;
+    const cacheName = (name as any) + query;
 
     // Check if this is cached
-    if(this.cache[cacheName]) {
+    if (this.cache[cacheName]) {
       return this.cache[cacheName].getRequest().pipe(
         shareReplay(this.cacheSize),
         tap((responses: T[]) => {
           responses.forEach(response => {
             Object.assign(response, { __cached: true });
-          })
-        }));
+          });
+        }),
+      );
     } else {
       const url = this.getURL(item);
       this.cache[cacheName] = new CachedAPIData(name);
-      this.cache[cacheName].setRequest(this.http.get<T[]>(url, httpOptions).pipe(
-        tap((responses: T[]) => {
-          responses.forEach(response => {
-            Object.assign(response, { __cached: false });
-          })
-        }),
-      ));
+      this.cache[cacheName].setRequest(
+        this.http.get<T[]>(url, httpOptions).pipe(
+          tap((responses: T[]) => {
+            responses.forEach(response => {
+              Object.assign(response, { __cached: false });
+            });
+          }),
+        ),
+      );
     }
 
     return this.cache[cacheName].getRequest();
-  } 
+  }
 
   /**
    *
@@ -179,7 +184,6 @@ export class CachedAPIService {
       }
     }
 
-    console.log(prototype)
     throw new Error("No URL found for '" + (name ? name : prototype) + "'.");
   }
 }
