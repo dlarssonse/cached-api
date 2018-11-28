@@ -1,3 +1,4 @@
+dist/test/
 lib/
 tsconfig.json
 tslint.json

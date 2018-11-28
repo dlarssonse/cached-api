@@ -1,11 +1,11 @@
 {
   "name": "@dlarsson.se/cached-api",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "Cached API request package.",
-  "main": "dist/service.js",
-  "types": "dist/service.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc && rimraf ./dist/test",
+    "build": "tsc",
     "build:clean": "rimraf ./dist",
     "test": "jest --config jestconfig.json",
     "test:watch": "jest --watch",
@@ -16,6 +16,9 @@
     "type": "git",
     "url": "git+https://github.com/dlarssonse/cached-api.git"
   },
+  "files": [
+    "dist"
+  ],
   "keywords": [
     "ng",
     "api"
