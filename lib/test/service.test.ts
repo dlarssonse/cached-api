@@ -3,6 +3,7 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { TestBed } from '@angular/core/testing';
 import { of, Subscription } from 'rxjs';
 
+import { getName } from '../api';
 import { IAPIClass } from '../api.interface';
 import { CachedAPIService } from '../api.service';
 
@@ -39,13 +40,15 @@ describe('CachedAPIService', () => {
   });
 
   it('adding an URL should be automatic', () => {
-    const name = serviceGET.getName(new TestData());
-    expect(name).toBe('TestData');
-    serviceFIND.getName(new TestData());
+    const nameinstance = getName(new TestData());
+    expect(nameinstance).toBe('TestData');
 
-    const result = serviceGET.addURL(new TestData(), 'localhost');
+    const name = getName(TestData);
+    expect(name).toBe('TestData');
+
+    const result = serviceGET.addURL(TestData, 'localhost');
     expect(result).toBeUndefined();
-    serviceFIND.addURL(new TestData(), 'localhost');
+    serviceFIND.addURL(TestData, 'localhost');
   });
 
   /*

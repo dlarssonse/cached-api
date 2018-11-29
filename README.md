@@ -14,9 +14,21 @@ A library for handling cached web requests.
   ```
   import { CachedAPIService } from '@dlarsson-se/cached-api;
   @NgModule({
-    providers: [ CachedAPIService ]
+    imports: [ APIModule.forRoot() ]
   })
-  export class AppModule { }
+  export class AppModule {
+    constructor(public apiService: CachedAPIService) {
+
+      /* If the requests should contain Authorization: Bearer TOKEN */
+      apiService.setToken('YOUR_TOKEN');                                 
+
+      /* Default URL for TestData objects. */
+      apiService.addURL(TestData, "http://localhost/testdata");         
+
+      /* Custom URL for the find command. */ 
+      apiService.addURL(TestData, "http://localhost/testdatas", "find"); 
+    }
+  }
   ```
 
 #### app.component.ts (without APIComponent inheritance)
@@ -24,15 +36,24 @@ A library for handling cached web requests.
   ```
   import { CachedAPIService } from '@dlarsson-se/cached-api';
   export class AppComponent {
-    constructor(private api: CachedAPIService) {
-      let testData = new TestData();
+    constructor(private apiService: CachedAPIService) {
       let id = 1;
-      api.addURL(testData, "http://localhost/testdata");
-      api.get(testData, id).subscribe((value) => {
-        console.log(value);
-       }, (error) => {
-        console.error(error);
-       })
+
+      /* Get By ID */
+      apiService.get(TestData, id)
+        .subscribe((value) => {
+          /* Do something with the reply. */
+        }, (error) => {
+          /* Error handling. */
+        })
+
+      /* Find */
+      apiService.find(TestData)
+        .subscribe((values) => {
+          /* Do something with the reply. */
+        }, (error) => {
+          /* Error handling. */
+        })
     }
   }
   ```
@@ -44,17 +65,20 @@ A library for handling cached web requests.
   export class AppComponent extends APIComponent {
     constructor(public apiService: CachedAPIService) {
       super(apiService);
-      let testClass = new TestData();
       let id = 1;
-      this.apiService.addURL(new TestData(), "http://localhost/testdata");
-      this.getAsync(testClass, id)
+      
+      /* get with mandatory supplied id. */
+      let p1 = this.getAsync(TestData, id)
+
+      /* find with optional querystring. */
+      let p2 = this.findAsync(TestData, "YOUR_QUERY_HERE") 
       Promise
-        .all([this.getPromise(testClass)])
+        .all([p1, p2])
         .then((values) => {
-          console.log(values);
+          /* Do something with the reply. */
         })
         .catch((error) => {
-          console.error(error);
+          /* Error handling. */
         }) 
     }
   }
