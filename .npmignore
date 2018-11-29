@@ -1,4 +1,5 @@
 dist/test/
+test/
 lib/
 tsconfig.json
 tslint.json

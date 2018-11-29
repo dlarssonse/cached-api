@@ -5,7 +5,12 @@
     "declaration": true,
     "rootDir": "./lib",
     "outDir": "./dist",
+    "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "strict": true
+    "strict": true,
+    "lib": [
+      "es2015",
+      "dom"
+    ]
   }
 }

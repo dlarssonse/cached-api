@@ -1,23 +1,16 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { shareReplay, tap } from 'rxjs/operators';
+import { shareReplay, tap, timeInterval } from 'rxjs/operators';
 
 import { CachedAPIData } from './cache';
 
-/**
- * HttpHeaders included with every request. Overwrite if needed.
- */
-export let httpOptions = {
-  headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
-};
-
-/**
- * Main service class for enabling Cached API Requests
- */
 @Injectable()
 export class CachedAPIService {
   public cacheSize = 1;
+  public httpOptions = {
+    headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+  };
 
   private urls: string[];
   private cache: CachedAPIData[];
@@ -65,7 +58,7 @@ export class CachedAPIService {
    */
   public put<T>(item: T): Observable<T> {
     const url = this.getURL(item);
-    return this.http.put<T>(url, item, httpOptions).pipe(
+    return this.http.put<T>(url, item, this.httpOptions).pipe(
       tap(response => {
         /* Handle Response Stuff? */
       }),
@@ -78,7 +71,7 @@ export class CachedAPIService {
    */
   public post<T>(item: T): Observable<T> {
     const url = this.getURL(item);
-    return this.http.post<T>(url, item, httpOptions).pipe(
+    return this.http.post<T>(url, item, this.httpOptions).pipe(
       tap(response => {
         /* Handle Response Stuff? */
       }),
@@ -91,7 +84,7 @@ export class CachedAPIService {
    */
   public delete<T>(item: T, id: any): Observable<T> {
     const url = this.getURL(item) + '/' + id;
-    return this.http.delete<T>(url, httpOptions).pipe(
+    return this.http.delete<T>(url, this.httpOptions).pipe(
       tap(response => {
         /* Handle Response Stuff? */
       }),
@@ -107,21 +100,15 @@ export class CachedAPIService {
     const cacheName = (name as any) + id;
 
     // Check if this is cached
-    if (this.cache[cacheName]) {
-      return this.cache[cacheName].getRequest().pipe(
-        shareReplay(this.cacheSize),
-        tap((response: T) => {
-          Object.assign(response, { __cached: true });
-        }),
-      );
-    } else {
+    if (!this.cache[cacheName]) {
       const url = this.getURL(item) + '/' + id;
       this.cache[cacheName] = new CachedAPIData(name);
       this.cache[cacheName].setRequest(
-        this.http.get<T>(url, httpOptions).pipe(
+        this.http.get<T>(url, this.httpOptions).pipe(
           tap((response: T) => {
-            Object.assign(response, { __cached: false });
+            Object.assign(response, { __cachedAt: Date.now() });
           }),
+          shareReplay(this.cacheSize),
         ),
       );
     }
@@ -139,25 +126,18 @@ export class CachedAPIService {
     const cacheName = (name as any) + query;
 
     // Check if this is cached
-    if (this.cache[cacheName]) {
-      return this.cache[cacheName].getRequest().pipe(
-        shareReplay(this.cacheSize),
-        tap((responses: T[]) => {
-          responses.forEach(response => {
-            Object.assign(response, { __cached: true });
-          });
-        }),
-      );
-    } else {
+    if (!this.cache[cacheName]) {
       const url = this.getURL(item);
       this.cache[cacheName] = new CachedAPIData(name);
       this.cache[cacheName].setRequest(
-        this.http.get<T[]>(url, httpOptions).pipe(
+        this.http.get<T[]>(url, this.httpOptions).pipe(
           tap((responses: T[]) => {
+            const time = Date.now();
             responses.forEach(response => {
-              Object.assign(response, { __cached: false });
+              Object.assign(response, { __cachedAt: time });
             });
           }),
+          shareReplay(this.cacheSize),
         ),
       );
     }

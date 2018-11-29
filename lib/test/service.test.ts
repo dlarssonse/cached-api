@@ -3,7 +3,7 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { TestBed } from '@angular/core/testing';
 import { of, Subscription } from 'rxjs';
 
-import { CachedAPIService } from '../service';
+import { CachedAPIService } from '../api.service';
 
 class TestData {
   public id: any;
@@ -76,7 +76,7 @@ describe('CachedAPIService', () => {
     const result = serviceGET.get(new TestData(), 0).subscribe(
       (value: any) => {
         expect(value.id).toBe(0);
-        expect((value as any).__cached).toBeFalsy();
+        expect((value as any).__cachedAt).toBeDefined();
         done();
       },
       (error: any) => {
@@ -95,7 +95,7 @@ describe('CachedAPIService', () => {
     const result = serviceGET.get(new TestData(), 0).subscribe(
       (value: any) => {
         expect(value.id).toBe(0);
-        expect((value as any).__cached).toBeTruthy();
+        expect((value as any).__cachedAt).toBeDefined();
         done();
       },
       (error: any) => {
@@ -115,7 +115,7 @@ describe('CachedAPIService', () => {
     const result = serviceGET.get(new TestData(), 0).subscribe(
       (value: any) => {
         expect(value.id).toBe(0);
-        expect((value as any).__cached).toBeFalsy();
+        expect((value as any).__cachedAt).toBeDefined();
         done();
       },
       (error: any) => {
@@ -134,11 +134,11 @@ describe('CachedAPIService', () => {
     const result = serviceFIND.find(new TestData()).subscribe(
       (value: any) => {
         expect((value as any)[0].id).toBe(0);
-        expect((value as any)[0].__cached).toBeFalsy();
+        expect((value as any)[0].__cachedAt).toBeDefined();
         expect((value as any)[1].id).toBe(1);
-        expect((value as any)[1].__cached).toBeFalsy();
+        expect((value as any)[1].__cachedAt).toBeDefined();
         expect((value as any)[2].id).toBe(2);
-        expect((value as any)[2].__cached).toBeFalsy();
+        expect((value as any)[2].__cachedAt).toBeDefined();
         done();
       },
       (error: any) => {
@@ -157,11 +157,11 @@ describe('CachedAPIService', () => {
     const result = serviceFIND.find(new TestData()).subscribe(
       (value: any) => {
         expect((value as any)[0].id).toBe(0);
-        expect((value as any)[0].__cached).toBeTruthy();
+        expect((value as any)[0].__cachedAt).toBeDefined();
         expect((value as any)[1].id).toBe(1);
-        expect((value as any)[1].__cached).toBeTruthy();
+        expect((value as any)[1].__cachedAt).toBeDefined();
         expect((value as any)[2].id).toBe(2);
-        expect((value as any)[2].__cached).toBeTruthy();
+        expect((value as any)[2].__cachedAt).toBeDefined();
         done();
       },
       (error: any) => {
@@ -181,11 +181,11 @@ describe('CachedAPIService', () => {
     const result = serviceFIND.find(new TestData()).subscribe(
       value => {
         expect((value as any)[0].id).toBe(0);
-        expect((value as any)[0].__cached).toBeFalsy();
+        expect((value as any)[0].__cachedAt).toBeDefined();
         expect((value as any)[1].id).toBe(1);
-        expect((value as any)[1].__cached).toBeFalsy();
+        expect((value as any)[1].__cachedAt).toBeDefined();
         expect((value as any)[2].id).toBe(2);
-        expect((value as any)[2].__cached).toBeFalsy();
+        expect((value as any)[2].__cachedAt).toBeDefined();
         done();
       },
       (error: any) => {
