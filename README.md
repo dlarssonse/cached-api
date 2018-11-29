@@ -12,7 +12,8 @@ A library for handling cached web requests.
 #### app.module.ts
 
   ```
-  import { CachedAPIService } from '@dlarsson-se/cached-api;
+  import { APIModule, CachedAPIService } from '@dlarsson-se/cached-api;
+
   @NgModule({
     imports: [ APIModule.forRoot() ]
   })
@@ -35,6 +36,7 @@ A library for handling cached web requests.
 
   ```
   import { CachedAPIService } from '@dlarsson-se/cached-api';
+
   export class AppComponent {
     constructor(private apiService: CachedAPIService) {
       let id = 1;
@@ -61,7 +63,8 @@ A library for handling cached web requests.
 #### app.component.ts (with APIComponent inheritance)
 
   ```
-  import { CachedAPIService, APIComponent } from '@dlarsson-se/cached-api';
+  import { APIComponent, CachedAPIService } from '@dlarsson-se/cached-api';
+
   export class AppComponent extends APIComponent {
     constructor(public apiService: CachedAPIService) {
       super(apiService);
@@ -72,6 +75,8 @@ A library for handling cached web requests.
 
       /* find with optional querystring. */
       let p2 = this.findAsync(TestData, "YOUR_QUERY_HERE") 
+
+      /* Handle all promises. */
       Promise
         .all([p1, p2])
         .then((values) => {
@@ -89,6 +94,7 @@ A library for handling cached web requests.
 
   ```
   import { IAPIClass } from '@dlarsson-se/cached-api';
+
   export class TestData implements IAPIClass {
     public _cachedAt: number = 0;
     public _className: string = "TestData";
