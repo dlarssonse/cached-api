@@ -3,10 +3,13 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { TestBed } from '@angular/core/testing';
 import { of, Subscription } from 'rxjs';
 
+import { IAPIClass } from '../api.interface';
 import { CachedAPIService } from '../api.service';
 
-class TestData {
+class TestData implements IAPIClass {
   public id: any;
+  public _cachedAt: number = 0;
+  public _className: string = 'TestData';
 }
 
 const httpGET = {
@@ -17,7 +20,7 @@ const httpFIND = {
   get: jest.fn(),
 };
 
-const testData: TestData[] = [{ id: 0 }, { id: 1 }, { id: 2 }];
+const testData: TestData[] = [new TestData(), new TestData(), new TestData()];
 
 describe('CachedAPIService', () => {
   beforeEach(() => {
@@ -75,8 +78,7 @@ describe('CachedAPIService', () => {
     httpGET.get.mockImplementationOnce(() => of(testData[0]));
     const result = serviceGET.get(new TestData(), 0).subscribe(
       (value: any) => {
-        expect(value.id).toBe(0);
-        expect((value as any).__cachedAt).toBeDefined();
+        expect((value as any)._cachedAt).toBeDefined();
         done();
       },
       (error: any) => {
@@ -94,8 +96,7 @@ describe('CachedAPIService', () => {
     httpGET.get.mockImplementationOnce(() => of(testData[0]));
     const result = serviceGET.get(new TestData(), 0).subscribe(
       (value: any) => {
-        expect(value.id).toBe(0);
-        expect((value as any).__cachedAt).toBeDefined();
+        expect((value as any)._cachedAt).toBeDefined();
         done();
       },
       (error: any) => {
@@ -114,8 +115,7 @@ describe('CachedAPIService', () => {
     serviceGET.clear(new TestData(), 0);
     const result = serviceGET.get(new TestData(), 0).subscribe(
       (value: any) => {
-        expect(value.id).toBe(0);
-        expect((value as any).__cachedAt).toBeDefined();
+        expect((value as any)._cachedAt).toBeDefined();
         done();
       },
       (error: any) => {
@@ -133,12 +133,10 @@ describe('CachedAPIService', () => {
     httpFIND.get.mockImplementationOnce(() => of(testData));
     const result = serviceFIND.find(new TestData()).subscribe(
       (value: any) => {
-        expect((value as any)[0].id).toBe(0);
-        expect((value as any)[0].__cachedAt).toBeDefined();
-        expect((value as any)[1].id).toBe(1);
-        expect((value as any)[1].__cachedAt).toBeDefined();
-        expect((value as any)[2].id).toBe(2);
-        expect((value as any)[2].__cachedAt).toBeDefined();
+        expect((value as TestData[]).length).toBe(3);
+        expect((value as any)[0]._cachedAt).toBeDefined();
+        expect((value as any)[1]._cachedAt).toBeDefined();
+        expect((value as any)[2]._cachedAt).toBeDefined();
         done();
       },
       (error: any) => {
@@ -156,12 +154,10 @@ describe('CachedAPIService', () => {
     httpFIND.get.mockImplementationOnce(() => of(testData));
     const result = serviceFIND.find(new TestData()).subscribe(
       (value: any) => {
-        expect((value as any)[0].id).toBe(0);
-        expect((value as any)[0].__cachedAt).toBeDefined();
-        expect((value as any)[1].id).toBe(1);
-        expect((value as any)[1].__cachedAt).toBeDefined();
-        expect((value as any)[2].id).toBe(2);
-        expect((value as any)[2].__cachedAt).toBeDefined();
+        expect((value as TestData[]).length).toBe(3);
+        expect((value as any)[0]._cachedAt).toBeDefined();
+        expect((value as any)[1]._cachedAt).toBeDefined();
+        expect((value as any)[2]._cachedAt).toBeDefined();
         done();
       },
       (error: any) => {
@@ -179,13 +175,11 @@ describe('CachedAPIService', () => {
     httpFIND.get.mockImplementationOnce(() => of(testData));
     serviceFIND.clear(new TestData());
     const result = serviceFIND.find(new TestData()).subscribe(
-      value => {
-        expect((value as any)[0].id).toBe(0);
-        expect((value as any)[0].__cachedAt).toBeDefined();
-        expect((value as any)[1].id).toBe(1);
-        expect((value as any)[1].__cachedAt).toBeDefined();
-        expect((value as any)[2].id).toBe(2);
-        expect((value as any)[2].__cachedAt).toBeDefined();
+      (value: any) => {
+        expect((value as TestData[]).length).toBe(3);
+        expect((value as any)[0]._cachedAt).toBeDefined();
+        expect((value as any)[1]._cachedAt).toBeDefined();
+        expect((value as any)[2]._cachedAt).toBeDefined();
         done();
       },
       (error: any) => {

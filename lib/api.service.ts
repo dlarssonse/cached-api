@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { shareReplay, tap, timeInterval } from 'rxjs/operators';
 
+import { IAPIClass } from './api.interface';
 import { CachedAPIData } from './cache';
 
 @Injectable()
@@ -37,6 +38,15 @@ export class CachedAPIService {
    * @param item
    */
   public getName(item: any): any {
+    try {
+      if ((item as IAPIClass)._className) {
+        return (item as IAPIClass)._className;
+      }
+    } catch {
+      // This is not a IAPIClass interface implemented class.
+      // Try to get name of class from constructor, does not work with minified JS.
+    }
+
     const prototype = Object.getPrototypeOf(item).constructor.name;
     return prototype;
   }
@@ -59,8 +69,8 @@ export class CachedAPIService {
   public put<T>(item: T): Observable<T> {
     const url = this.getURL(item);
     return this.http.put<T>(url, item, this.httpOptions).pipe(
-      tap(response => {
-        /* Handle Response Stuff? */
+      tap((response: T) => {
+        Object.assign(response, { _className: name });
       }),
     );
   }
@@ -72,8 +82,8 @@ export class CachedAPIService {
   public post<T>(item: T): Observable<T> {
     const url = this.getURL(item);
     return this.http.post<T>(url, item, this.httpOptions).pipe(
-      tap(response => {
-        /* Handle Response Stuff? */
+      tap((response: T) => {
+        Object.assign(response, { _className: name });
       }),
     );
   }
@@ -85,8 +95,8 @@ export class CachedAPIService {
   public delete<T>(item: T, id: any): Observable<T> {
     const url = this.getURL(item) + '/' + id;
     return this.http.delete<T>(url, this.httpOptions).pipe(
-      tap(response => {
-        /* Handle Response Stuff? */
+      tap((response: T) => {
+        Object.assign(response, { _className: name });
       }),
     );
   }
@@ -106,7 +116,7 @@ export class CachedAPIService {
       this.cache[cacheName].setRequest(
         this.http.get<T>(url, this.httpOptions).pipe(
           tap((response: T) => {
-            Object.assign(response, { __cachedAt: Date.now() });
+            Object.assign(response, { _cachedAt: Date.now(), _className: name });
           }),
           shareReplay(this.cacheSize),
         ),
@@ -134,7 +144,7 @@ export class CachedAPIService {
           tap((responses: T[]) => {
             const time = Date.now();
             responses.forEach(response => {
-              Object.assign(response, { __cachedAt: time });
+              Object.assign(response, { _cachedAt: time, _className: name });
             });
           }),
           shareReplay(this.cacheSize),
@@ -151,19 +161,13 @@ export class CachedAPIService {
    * @param name
    */
   private getURL<T>(item: T): any {
+    const name = this.getName(item);
     if (name) {
       if (this.urls[name]) {
         return this.urls[name];
       }
     }
 
-    const prototype = Object.getPrototypeOf(item).constructor.name;
-    if (prototype) {
-      if (this.urls[prototype]) {
-        return this.urls[prototype];
-      }
-    }
-
-    throw new Error("No URL found for '" + (name ? name : prototype) + "'.");
+    throw new Error("No URL found for '" + name + "'. Did you include _className in your class definition?");
   }
 }

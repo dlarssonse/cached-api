@@ -1,11 +1,11 @@
 {
-  "name": "@dlarsson.se/cached-api",
-  "version": "0.1.10",
+  "name": "@dlarsson-se/cached-api",
+  "version": "0.1.21",
   "description": "Cached API request package.",
   "main": "dist/api.js",
   "types": "dist/api.d.ts",
   "scripts": {
-    "build": "tsc && rimraf ./dist/test && cp dist/* ../../frontend/app-template/node_modules/@dlarsson.se/cached-api/dist/",
+    "build": "tsc && rimraf ./dist/test && cp dist/* ../../frontend/app-template/node_modules/@dlarsson-se/cached-api/dist/",
     "build:clean": "rimraf ./dist",
     "build:publish": "cd ./dist && npm publish",
     "test": "jest --config jestconfig.json",
