@@ -1,6 +1,6 @@
 {
   "name": "@dlarsson-se/cached-api",
-  "version": "0.1.21",
+  "version": "0.2.1",
   "description": "Cached API request package.",
   "main": "dist/api.js",
   "types": "dist/api.d.ts",
