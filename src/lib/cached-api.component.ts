@@ -1,10 +1,17 @@
-import { OnDestroy, OnInit } from '@angular/core';
-import { getName } from './api';
-import { CachedAPIService } from './api.service';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { CachedAPIService, getName } from './cached-api.service'
 
-export * from './api.interface';
-export * from './api.service';
-export * from './cache';
+/*
+@Component({
+  selector: 'lib-cached-api',
+  template: `
+    <p>
+      cached-api works!
+    </p>
+  `,
+  styles: []
+})
+*/
 
 /**
  * Extend this class to enable getAsync, putAsync, postAsync, deleteAsync, findAsync.

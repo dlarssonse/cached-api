@@ -15,7 +15,10 @@ A library for handling cached web requests.
   import { APIModule, CachedAPIService } from '@dlarsson-se/cached-api;
 
   @NgModule({
-    imports: [ APIModule.forRoot() ]
+    imports: [ APIModule.forRoot() ]  // If it works, or
+    ...
+    imports: [ APIModule ],           // If it doesn't
+    providers: [ CachedAPIService ]
   })
   export class AppModule {
     constructor(public apiService: CachedAPIService) {

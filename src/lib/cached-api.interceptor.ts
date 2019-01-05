@@ -2,7 +2,7 @@ import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/c
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { CachedAPIService } from './api.service';
+import { CachedAPIService } from './cached-api.service';
 
 @Injectable()
 export class APIInterceptor implements HttpInterceptor {

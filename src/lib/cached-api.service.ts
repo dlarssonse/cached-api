@@ -3,8 +3,8 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { shareReplay, tap } from 'rxjs/operators';
 
-import { getName } from './api';
-import { CachedAPIData } from './cache';
+import { IAPIClass } from './cached-api.interface';
+import { CachedAPIData } from './cached-api.class';
 
 @Injectable()
 export class CachedAPIService {
@@ -180,3 +180,32 @@ export class CachedAPIService {
     );
   }
 }
+
+/**
+ * Returns the name of the class or type of the item submitted.
+ * Uses either item.__className from IAPIClass, item.name or item.constructor.name
+ * @param item
+ */
+export function getName(item: any): any {
+  try {
+    if ((item as IAPIClass)._className) {
+      return (item as IAPIClass)._className;
+    }
+  } catch {
+    // This is not a IAPIClass interface implemented class.
+    // Try to get name of class from constructor, does not work with minified JS.
+  }
+
+  try {
+    if (typeof item === 'function' && item.name) {
+      return item.name;
+    }
+  } catch {
+    // This is not a IAPIClass interface implemented class.
+    // Try to get name of class from constructor, does not work with minified JS.
+  }
+
+  const prototype = Object.getPrototypeOf(item).constructor.name;
+  return prototype;
+}
+
